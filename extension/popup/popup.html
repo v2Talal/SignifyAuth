@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignifyAuth</title>
+    <style>
+        :root {
+            --bg: #0b0d17; --surface: #131627; --surface2: #1a1e35; --border: #252a45;
+            --accent: #7c5cfc; --glow: rgba(124,92,252,0.25);
+            --green: #00e6a0; --green-bg: rgba(0,230,160,0.08);
+            --red: #ff4d6a; --red-bg: rgba(255,77,106,0.08);
+            --yellow: #ffb830; --text: #eef0ff; --text2: #8890b5; --text3: #505880;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            width: 380px; min-height: 300px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text);
+            animation: bodyIn 0.3s cubic-bezier(0.22,1,0.36,1);
+        }
+        @keyframes bodyIn { from { opacity:0; transform:translateY(-8px) scale(0.98); } to { opacity:1; transform:none; } }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+        @keyframes pulse { 0%,100% { box-shadow:0 0 0 0 var(--glow); } 50% { box-shadow:0 0 0 12px transparent; } }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        @keyframes shake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-4px); } 75% { transform:translateX(4px); } }
+        @keyframes popIn { 0% { transform:scale(0.8); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+        @keyframes slideDown { from { max-height:0; opacity:0; } to { max-height:200px; opacity:1; } }
+        @keyframes checkmark { 0% { stroke-dashoffset:20; } 100% { stroke-dashoffset:0; } }
+
+        .container { padding: 20px; }
+
+        .header {
+            display:flex; align-items:center; gap:10px;
+            padding-bottom:16px; margin-bottom:16px; border-bottom:1px solid var(--border);
+        }
+        .header-logo {
+            width:38px; height:38px; border-radius:10px;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            display:flex; align-items:center; justify-content:center;
+            font-size:19px; animation: pulse 2.5s infinite;
+            transition: transform 0.2s;
+        }
+        .header-logo:hover { transform:scale(1.05); }
+        .header-text h1 { font-size:16px; font-weight:700; letter-spacing:-0.3px; }
+        .header-text span { font-size:11px; color:var(--text2); }
+
+        .card {
+            background: var(--surface); border:1px solid var(--border);
+            border-radius:12px; padding:16px; margin-bottom:12px;
+            animation: fadeIn 0.35s cubic-bezier(0.22,1,0.36,1);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .card:hover { border-color: rgba(124,92,252,0.3); }
+        .card-accent { border-color: var(--accent); background: linear-gradient(135deg, rgba(124,92,252,0.06), transparent); }
+        .card-green { border-color: rgba(0,230,160,0.3); background: var(--green-bg); }
+        .card-red { border-color: rgba(255,77,106,0.3); background: var(--red-bg); }
+
+        .security-banner {
+            display:flex; align-items:center; gap:10px;
+            padding:10px 12px; border-radius:8px;
+            background: rgba(0,230,160,0.05); border:1px solid rgba(0,230,160,0.12);
+            margin-bottom:12px; font-size:11px; color:var(--green); line-height:1.4;
+            animation: fadeIn 0.4s ease 0.1s both;
+        }
+        .security-banner .icon { font-size:16px; flex-shrink:0; }
+
+        .sign-request { text-align:center; animation: popIn 0.4s cubic-bezier(0.22,1,0.36,1); }
+        .lock-icon {
+            width:60px; height:60px; border-radius:50%; margin:0 auto 14px;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            display:flex; align-items:center; justify-content:center;
+            font-size:30px; animation: pulse 2s infinite;
+            transition: transform 0.2s;
+        }
+        .lock-icon:hover { transform:scale(1.05); }
+        .sign-request h2 { font-size:17px; margin-bottom:4px; }
+        .sign-request .site { font-size:13px; color:var(--text2); margin-bottom:14px; }
+        .detail {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:8px 12px; background:var(--surface2); border-radius:8px;
+            margin-bottom:6px; font-size:12px;
+            animation: fadeIn 0.3s ease;
+        }
+        .detail:nth-child(2) { animation-delay:0.05s; }
+        .detail:nth-child(3) { animation-delay:0.1s; }
+        .detail .label { color:var(--text3); }
+        .detail .value { color:var(--text); font-family:'SF Mono',Monaco,Consolas,monospace; font-size:11px; }
+
+        .account-list { margin-bottom:12px; }
+        .account-item {
+            display:flex; align-items:center; gap:12px;
+            padding:12px; background:var(--surface2); border:1px solid var(--border);
+            border-radius:10px; margin-bottom:8px; cursor:pointer;
+            transition: all 0.2s cubic-bezier(0.22,1,0.36,1);
+            animation: fadeIn 0.3s ease both;
+        }
+        .account-item:nth-child(1) { animation-delay:0s; }
+        .account-item:nth-child(2) { animation-delay:0.05s; }
+        .account-item:nth-child(3) { animation-delay:0.1s; }
+        .account-item:hover { border-color:var(--accent); background:rgba(124,92,252,0.06); transform:translateX(3px); }
+        .account-item.active { border-color:var(--green); background:var(--green-bg); }
+        .account-avatar {
+            width:40px; height:40px; border-radius:50%;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            display:flex; align-items:center; justify-content:center;
+            font-size:16px; font-weight:700; color:#fff; flex-shrink:0;
+            transition: transform 0.2s;
+        }
+        .account-item:hover .account-avatar { transform:scale(1.08); }
+        .account-info { flex:1; }
+        .account-info .name { font-size:14px; font-weight:600; }
+        .account-info .id { font-size:11px; color:var(--text3); font-family:monospace; }
+        .check { color:var(--green); font-size:16px; font-weight:700; }
+
+        .input-group { margin-bottom:12px; }
+        .input-group label {
+            display:block; font-size:11px; font-weight:600; color:var(--text3);
+            margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .input-wrap { position:relative; }
+        .input {
+            width:100%; padding:10px 12px; padding-right:38px;
+            background:var(--surface2); border:1px solid var(--border);
+            border-radius:8px; color:var(--text); font-size:13px;
+            font-family:inherit; outline:none; transition: all 0.2s;
+        }
+        .input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--glow); }
+        .input.error { border-color:var(--red); animation:shake 0.3s ease; }
+        .toggle-pw {
+            position:absolute; right:8px; top:50%; transform:translateY(-50%);
+            background:none; border:none; cursor:pointer; font-size:14px;
+            padding:4px; opacity:0.5; transition:opacity 0.2s;
+        }
+        .toggle-pw:hover { opacity:1; }
+
+        .btn {
+            width:100%; padding:12px; border:none; border-radius:10px;
+            font-size:14px; font-weight:600; cursor:pointer;
+            font-family:inherit; transition:all 0.2s cubic-bezier(0.22,1,0.36,1);
+            display:flex; align-items:center; justify-content:center; gap:8px;
+        }
+        .btn:active { transform:scale(0.97); }
+        .btn-primary { background:var(--accent); color:#fff; }
+        .btn-primary:hover { background:#8a6aff; transform:translateY(-1px); box-shadow:0 4px 16px var(--glow); }
+        .btn-approve { background:var(--green); color:#000; }
+        .btn-approve:hover { background:#00ffb3; box-shadow:0 4px 16px rgba(0,230,160,0.3); }
+        .btn-reject { background:var(--red-bg); color:var(--red); border:1px solid rgba(255,77,106,0.15); }
+        .btn-reject:hover { background:rgba(255,77,106,0.12); }
+        .btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+        .btn-secondary:hover { border-color:var(--accent); }
+        .btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
+
+        .btn-row { display:flex; gap:8px; margin-top:12px; }
+        .btn-row .btn { flex:1; }
+
+        .status {
+            padding:8px 12px; border-radius:8px; font-size:12px;
+            margin-bottom:12px; display:none; line-height:1.4;
+        }
+        .status.visible { display:block; animation:fadeIn 0.25s ease; }
+        .status.success { background:var(--green-bg); border:1px solid rgba(0,230,160,0.2); color:var(--green); }
+        .status.error { background:var(--red-bg); border:1px solid rgba(255,77,106,0.2); color:var(--red); }
+        .status.info { background:var(--glow); border:1px solid rgba(124,92,252,0.2); color:var(--accent); }
+
+        .hidden { display:none !important; }
+        .empty { text-align:center; padding:20px 0; color:var(--text3); font-size:13px; }
+        .empty .icon { font-size:28px; margin-bottom:8px; }
+
+        .toast-msg {
+            position:fixed; bottom:16px; left:50%; transform:translateX(-50%) translateY(20px);
+            padding:8px 16px; background:var(--green); color:#000;
+            border-radius:8px; font-size:12px; font-weight:600; z-index:9999;
+            opacity:0; transition:all 0.3s cubic-bezier(0.22,1,0.36,1);
+            box-shadow:0 4px 20px rgba(0,230,160,0.3);
+        }
+        .toast-msg.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-logo">🔐</div>
+            <div class="header-text">
+                <h1>SignifyAuth</h1>
+                <span>Zero-Knowledge Authentication</span>
+            </div>
+        </div>
+
+        <!-- Main View -->
+        <div id="mainView">
+            <div class="security-banner">
+                <span class="icon">🛡️</span>
+                <span>Private keys are encrypted (AES-256-GCM + PBKDF2). Decrypted only during signing.</span>
+            </div>
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Your Keys</div>
+            <div id="keyList" class="account-list"><div class="empty"><div class="icon">🔑</div><p>No keys yet</p></div></div>
+            <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <button class="btn btn-primary" id="btnCreateKey" style="flex:1;">+ Create</button>
+                <button class="btn btn-secondary" id="btnBackupKeys" style="flex:1;">💾 Backup</button>
+                <button class="btn btn-secondary" id="btnImportBackup" style="flex:1;">📥 Import</button>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:12px;">
+                <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Import Key</div>
+                <div class="input-group"><label>Paste Private Key</label><textarea class="input" id="importKeyInput" placeholder="Paste key..." rows="2" style="resize:vertical;min-height:48px;font-family:monospace;font-size:11px;padding-right:12px;"></textarea></div>
+                <div class="input-group"><label>Key Name</label><input class="input" id="importKeyName" placeholder="e.g. Imported" style="padding-right:12px;"></div>
+                <div class="input-group"><label>Password</label><div class="input-wrap"><input type="password" class="input" id="importKeyPassword" placeholder="Min 8 chars"><button class="toggle-pw" data-target="importKeyPassword">👁</button></div></div>
+                <div class="input-group"><label>Confirm</label><div class="input-wrap"><input type="password" class="input" id="importKeyPasswordConfirm" placeholder="Repeat"><button class="toggle-pw" data-target="importKeyPasswordConfirm">👁</button></div></div>
+                <button class="btn btn-secondary" id="btnImportKey">Import & Encrypt</button>
+            </div>
+            <div id="mainStatus" class="status"></div>
+        </div>
+
+        <!-- Create Key -->
+        <div id="createView" class="hidden">
+            <div class="card card-accent" style="text-align:center;">
+                <div style="font-size:32px;margin-bottom:8px;">🔑</div>
+                <h2 style="font-size:15px;margin-bottom:4px;">Create New Identity</h2>
+                <p style="font-size:12px;color:var(--text2);">Generate a key pair. Encrypted with your password.</p>
+            </div>
+            <div class="input-group"><label>Key Name</label><input class="input" id="newKeyName" placeholder="e.g. My Work" style="padding-right:12px;"></div>
+            <div class="input-group"><label>Password</label><div class="input-wrap"><input type="password" class="input" id="newKeyPassword" placeholder="Min 8 characters"><button class="toggle-pw" data-target="newKeyPassword">👁</button></div></div>
+            <div class="input-group"><label>Confirm</label><div class="input-wrap"><input type="password" class="input" id="newKeyPasswordConfirm" placeholder="Repeat"><button class="toggle-pw" data-target="newKeyPasswordConfirm">👁</button></div></div>
+            <div class="security-banner" style="border-color:rgba(255,184,48,0.15);background:rgba(255,184,48,0.05);color:var(--yellow);">
+                <span class="icon">⚠️</span><span>Forgot password = key lost forever. No recovery.</span>
+            </div>
+            <button class="btn btn-primary" id="btnGenerateKey">Generate & Encrypt</button>
+            <button class="btn btn-secondary" id="btnBackCreate" style="margin-top:8px;">← Back</button>
+        </div>
+
+        <!-- Select Account (multi-key) -->
+        <div id="selectAccountView" class="hidden">
+            <div class="card card-accent" style="text-align:center;padding:12px;">
+                <div style="font-size:24px;margin-bottom:6px;">🔐</div>
+                <h2 style="font-size:15px;">Choose Account to Sign</h2>
+                <p style="font-size:12px;color:var(--text2);">Multiple keys found. Select one.</p>
+            </div>
+            <div id="accountList" class="account-list"></div>
+        </div>
+
+        <!-- Sign Request -->
+        <div id="signView" class="hidden">
+            <div class="card card-accent sign-request">
+                <div class="lock-icon">🔐</div>
+                <h2>Sign This Login</h2>
+                <p class="site" id="signWebsite">Requesting site</p>
+                <div class="detail"><span class="label">Time</span><span class="value" id="signTime"></span></div>
+                <div class="detail"><span class="label">Session</span><span class="value" id="signNonce"></span></div>
+            </div>
+            <div class="card" style="padding:12px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="account-avatar" id="signAvatar" style="width:36px;height:36px;font-size:14px;">?</div>
+                    <div><div style="font-size:13px;font-weight:600;" id="signKeyName">Key</div><div style="font-size:11px;color:var(--text3);font-family:monospace;" id="signKeyPub"></div></div>
+                </div>
+            </div>
+            <div class="security-banner">
+                <span class="icon">🔒</span><span>Your private key signs locally. Only the signature is sent.</span>
+            </div>
+            <div class="input-group"><label>Password</label><div class="input-wrap"><input type="password" class="input" id="signPassword" placeholder="Enter password to sign"><button class="toggle-pw" data-target="signPassword">👁</button></div></div>
+            <div id="signStatus" class="status"></div>
+            <div class="btn-row">
+                <button class="btn btn-reject" id="btnRejectSign">Reject</button>
+                <button class="btn btn-approve" id="btnApproveSign">🔐 Sign</button>
+            </div>
+        </div>
+
+        <!-- Decrypt -->
+        <div id="decryptView" class="hidden">
+            <div class="card" style="text-align:center;">
+                <div style="font-size:28px;margin-bottom:8px;">🔓</div>
+                <h2 style="font-size:15px;margin-bottom:4px;">Unlock Key</h2>
+                <p style="font-size:12px;color:var(--text2);" id="decryptPurpose"></p>
+            </div>
+            <div class="input-group"><label>Password</label><div class="input-wrap"><input type="password" class="input" id="decryptPassword" placeholder="Password"><button class="toggle-pw" data-target="decryptPassword">👁</button></div></div>
+            <div id="decryptStatus" class="status"></div>
+            <div class="btn-row">
+                <button class="btn btn-secondary" id="btnDecryptCancel">Cancel</button>
+                <button class="btn btn-primary" id="btnDecryptConfirm">Unlock</button>
+            </div>
+        </div>
+
+        <!-- View Key -->
+        <div id="viewKeyView" class="hidden">
+            <div class="card card-red">
+                <h2 style="font-size:14px;margin-bottom:8px;">🔑 Private Key</h2>
+                <p style="font-size:11px;color:var(--red);margin-bottom:8px;">Decrypted in memory only. Copy and close immediately.</p>
+                <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:monospace;font-size:11px;word-break:break-all;line-height:1.5;max-height:80px;overflow-y:auto;" id="viewKeyContent"></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-secondary" id="btnCopyViewKey">📋 Copy</button>
+                <button class="btn btn-secondary" id="btnDownloadViewKey">⬇ Download</button>
+            </div>
+            <button class="btn btn-primary" id="btnCloseViewKey" style="margin-top:8px;">Close & Wipe</button>
+        </div>
+
+        <!-- Backup View -->
+        <div id="backupView" class="hidden">
+            <div class="card card-accent" style="text-align:center;">
+                <div style="font-size:28px;margin-bottom:8px;">💾</div>
+                <h2 style="font-size:15px;margin-bottom:4px;">Backup Keys</h2>
+                <p style="font-size:12px;color:var(--text2);">Export all keys as an encrypted .Signify file</p>
+            </div>
+            <div class="security-banner">
+                <span class="icon">🔒</span><span>Your backup is encrypted with a password. Without it, the backup is useless.</span>
+            </div>
+            <div class="input-group"><label>Backup Password</label><div class="input-wrap"><input type="password" class="input" id="backupPassword" placeholder="Set encryption password"><button class="toggle-pw" data-target="backupPassword">👁</button></div></div>
+            <div class="input-group"><label>Confirm</label><div class="input-wrap"><input type="password" class="input" id="backupPasswordConfirm" placeholder="Repeat"><button class="toggle-pw" data-target="backupPasswordConfirm">👁</button></div></div>
+            <div id="backupStatus" class="status"></div>
+            <button class="btn btn-approve" id="btnDoBackup">💾 Export Backup</button>
+            <button class="btn btn-secondary" id="btnBackBackup" style="margin-top:8px;">← Back</button>
+        </div>
+
+        <!-- Import Backup View -->
+        <div id="importBackupView" class="hidden">
+            <div class="card card-accent" style="text-align:center;">
+                <div style="font-size:28px;margin-bottom:8px;">📥</div>
+                <h2 style="font-size:15px;margin-bottom:4px;">Import Backup</h2>
+                <p style="font-size:12px;color:var(--text2);">Load keys from a .Signify backup file</p>
+            </div>
+            <div class="input-group"><label>Select .Signify File</label><input type="file" class="input" id="backupFileInput" accept=".Signify,.signify,.json" style="padding-right:12px;"></div>
+            <div class="input-group"><label>Backup Password</label><div class="input-wrap"><input type="password" class="input" id="importBackupPassword" placeholder="Enter backup password"><button class="toggle-pw" data-target="importBackupPassword">👁</button></div></div>
+            <div id="importBackupStatus" class="status"></div>
+            <button class="btn btn-approve" id="btnDoImportBackup">📥 Import Backup</button>
+            <button class="btn btn-secondary" id="btnBackImportBackup" style="margin-top:8px;">← Back</button>
+        </div>
+    </div>
+
+    <script src="../lib/tweetnacl.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignifyAuth — Passwordless Authentication</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app" id="app">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🔐</div>
+                <span class="logo-text">SignifyAuth</span>
+            </div>
+            <div class="header-status" id="headerStatus"></div>
+        </header>
+
+        <main class="main">
+            <!-- Landing -->
+            <section class="hero" id="heroSection">
+                <div class="hero-badge">No Password. No Email. No Compromise.</div>
+                <h1 class="hero-title">Authentication<br>Reimagined</h1>
+                <p class="hero-subtitle">
+                    Click a button. The extension opens automatically. 
+                    Your key signs for you — the website never sees it.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-lg" id="btnCreateID">
+                        <span class="btn-icon">🔑</span>
+                        Create Identity
+                    </button>
+                    <button class="btn btn-secondary btn-lg" id="btnLogin">
+                        <span class="btn-icon">🔓</span>
+                        Log In
+                    </button>
+                </div>
+                <div class="hero-info">
+                    <div class="info-card">
+                        <div class="info-icon">🛡️</div>
+                        <div class="info-text">
+                            <strong>Zero Knowledge</strong>
+                            <span>Private key never leaves the extension</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">⚡</div>
+                        <div class="info-text">
+                            <strong>Auto-Opens</strong>
+                            <span>Extension opens with one click</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">🧱</div>
+                        <div class="info-text">
+                            <strong>Unhackable</strong>
+                            <span>No passwords to steal, no databases to breach</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Registration Status -->
+            <section class="panel hidden" id="registerPanel">
+                <button class="back-btn" id="btnBackReg">← Back</button>
+                <div class="panel-header">
+                    <div class="panel-icon">🔑</div>
+                    <h2>Creating Your Identity</h2>
+                    <p>The extension is opening. Set a name and password inside it.</p>
+                </div>
+                <div class="login-steps">
+                    <div class="login-step" id="loginStep1">
+                        <span class="login-step-icon">⏳</span>
+                        <span>Extension opening...</span>
+                    </div>
+                </div>
+                <div id="regStatus" class="status-box"></div>
+            </section>
+
+            <!-- Login Status -->
+            <section class="panel hidden" id="loginPanel">
+                <button class="back-btn" id="btnBackLogin">← Back</button>
+                <div class="panel-header">
+                    <div class="panel-icon">🔓</div>
+                    <h2>Logging In</h2>
+                    <p>The extension will pop up. Enter your password to sign.</p>
+                </div>
+                <div class="login-steps">
+                    <div class="login-step" id="loginStep1">
+                        <span class="login-step-icon">⏳</span>
+                        <span>Requesting challenge from server...</span>
+                    </div>
+                    <div class="login-step" id="loginStep2">
+                        <span class="login-step-icon">⏳</span>
+                        <span>Extension signing identity (1st signature)...</span>
+                    </div>
+                    <div class="login-step" id="loginStep3">
+                        <span class="login-step-icon">⏳</span>
+                        <span>Verifying identity on server...</span>
+                    </div>
+                    <div class="login-step" id="loginStep4">
+                        <span class="login-step-icon">⏳</span>
+                        <span>Extension signing confirmation (2nd signature)...</span>
+                    </div>
+                    <div class="login-step" id="loginStep5">
+                        <span class="login-step-icon">⏳</span>
+                        <span>Verifying — final login...</span>
+                    </div>
+                </div>
+                <div id="loginStatus" class="status-box"></div>
+            </section>
+
+            <!-- Dashboard -->
+            <section class="panel hidden" id="dashboardPanel">
+                <div class="dashboard-header">
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <div class="user-info">
+                        <h2 id="dashboardUsername">User</h2>
+                        <p class="user-id" id="dashboardUserId"></p>
+                    </div>
+                    <button class="btn btn-secondary" id="btnLogout">Log Out</button>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dash-card">
+                        <div class="dash-card-icon">🔐</div>
+                        <h3>Auth Method</h3>
+                        <p>Ed25519 + Extension</p>
+                        <span class="badge badge-green">Active</span>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-card-icon">🛡️</div>
+                        <h3>Security</h3>
+                        <p>Two-Signature Protocol</p>
+                        <span class="badge badge-green">Maximum</span>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-card-icon">🧩</div>
+                        <h3>Signed By</h3>
+                        <p>Extension (auto)</p>
+                        <span class="badge badge-blue">Zero-Click</span>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-card-icon">📡</div>
+                        <h3>Session</h3>
+                        <p>Active</p>
+                        <span class="badge badge-green">Valid</span>
+                    </div>
+                </div>
+                <div class="dashboard-explanation">
+                    <h3>What Happened</h3>
+                    <div class="flow-diagram">
+                        <div class="flow-step"><div class="flow-num">1</div><div class="flow-label">Extension opened</div></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step"><div class="flow-num">2</div><div class="flow-label">You entered password</div></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step"><div class="flow-num">3</div><div class="flow-label">Extension signed 2 challenges</div></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step"><div class="flow-num">4</div><div class="flow-label">Server verified → logged in</div></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>SignifyAuth — Passwordless Authentication</p>
+            <p class="footer-sub">Your key. Your identity. No middlemen.</p>
+        </footer>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
